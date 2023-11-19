@@ -2,15 +2,20 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Wallet;
+use Laravel\Passport\HasApiTokens;
+use Kyslik\ColumnSortable\Sortable;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    use SoftDeletes;
+    use Sortable;
 
     /**
      * The attributes that are mass assignable.
@@ -24,8 +29,10 @@ class User extends Authenticatable
         'email',
         'username',
         'password',
+        'otp',
         'image',
-        'refrence_code',
+        'reference_code',
+        'by_reference_code',
         'status'
     ];
 
@@ -36,6 +43,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'otp',
         'updated_at',
         'deleted_at'
     ];
@@ -48,4 +56,25 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
+
+    protected $sortable = [
+        'id',
+        'first_name',
+        'last_name',
+        'username',
+        'email',
+    ];
+
+    // Define an accessor for the image attribute
+    public function getImageAttribute()
+    {
+        $disk = 'local'; // Replace with the name of your configured disk
+        $relativePath = $this->attributes['image']; // 'image' is the name of your image attribute
+        return asset('storage/users/'.$this->attributes['image']);
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class, 'user_id', 'id');
+    }
 }

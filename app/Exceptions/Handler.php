@@ -2,8 +2,9 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
 {
@@ -26,5 +27,23 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+     /**
+     * When unauthenticaticated user can register then pass exception.
+     *
+     * @return void
+     */
+    public function unauthenticated($error, $errorMessages = [], $code = 203)
+    {
+        if(request()->expectsJson()) {
+            $response = [
+                'success' => "false",
+                'code' => $code,
+                'message' => Lang::get('messages.UNAUTHORIZED_MSG'),
+            ];
+            return response()->json($response, $code);
+        }
+        return redirect()->guest(route('login'));
     }
 }

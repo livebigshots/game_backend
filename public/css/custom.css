@@ -1,0 +1,44 @@
+.validation-error {
+    color:#e61717!important
+}
+.error {
+    color:#e61717!important;
+}
+a {
+    text-decoration: none;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+
+.icon_image {
+    width:24px;
+    vertical-align: middle;
+    float: left;
+    margin-left: 0.05rem;
+    font-size: 1.2rem;
+    margin-right: 0.2rem;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+
+  }
+
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+
+@media
+only screen and (max-width: 760px),
+(min-device-width: 668px) and (max-device-width: 1040px)  {
+    .button {
+        position: fixed;
+        margin-top:20px;
+        margin-left:20px;
+        float: left;
+    }
+}

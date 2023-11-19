@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('username')->unique();
             $table->string('password');
             $table->string('image')->nullable();
-            $table->string('refresh_code')->nullable()->unique();
-            $table->enum('status', ['1', '2'])->comment('1: Active |2: Deactive');
+            $table->string('reference_code')->nullable()->unique();
+            $table->enum('status', ['1', '2'])->default('2')->comment('1: Active |2: Deactive');
             $table->timestamps();
             $table->softDeletes();
         });
