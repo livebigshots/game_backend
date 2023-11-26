@@ -63,67 +63,65 @@ class ColorPredictionController extends BaseController
 
         $gameColor = GamePrediction::find($request->game_id);
 
-        $allColorGame = ColorPrediction::where('game_id', $request->game_id)->get()->toArray();
-        $count = count($allColorGame);
-
-        if ($count == 1) {
-            do {
-                $randomColor = ['red', 'violet', 'green', 'orange'][array_rand([0, 1, 2, 3])];
-            } while ($randomColor == $allColorGame[0]['game_color']);
-            $gameColor->update(['result_color' => $randomColor]);
-            ColorPrediction::where('game_id', $request->game_id)->update(['result_color' => $randomColor]);
-        }
-
-        if ($count == 2) {
-            do {
-                $randomColor = ['red', 'violet', 'green', 'orange'][array_rand([0, 1, 2, 3])];
-            } while ($randomColor == $allColorGame[0]['game_color'] || $randomColor == $allColorGame[1]['game_color']);
-            $gameColor->update(['result_color' => $randomColor]);
-            ColorPrediction::where('game_id', $request->game_id)->update(['result_color' => $randomColor]);
-            dd($randomColor, $allColorGame[0]['game_color'], $allColorGame[1]['game_color']);
-        }
-
-        if ($count > 2) {
-            $userColors = [];
-            foreach ($allColorGame as $gameData) {
-                $userColors[] = [
-                    'color' => $gameData['game_color'],
-                    'amount' => (int) $gameData['amount'],
-                ];
-            }
-
-            $outputArray = [];
-
-            foreach ($userColors as $item) {
-                $color = $item['color'];
-                $amount = $item['amount'];
-
-                if (isset($outputArray[$color])) {
-                    // If the color already exists in the output array, add the amount to it
-                    $outputArray[$color]['amount'] += $amount;
-                } else {
-                    // If the color doesn't exist in the output array, create a new entry
-                    $outputArray[$color] = ['color' => $color, 'amount' => $amount];
-                }
-            }
-
-            usort($outputArray, function ($a, $b) {
-                return $a['amount'] - $b['amount'];
-            });
-
-            $lowestAmountColor = $outputArray[0]['color'];
-            $gameColor->update(['result_color' => $lowestAmountColor]);
-            ColorPrediction::where('game_id', $request->game_id)->update(['result_color' => $lowestAmountColor]);
-        }
-
-
         if($gameColor->status != 2) {
             // $gameColor->update(['status' => '2']);
             if($gameColor && empty($gameColor->result_color)) {
-                $randomColor = $gameColor->randomColor();
-                $gameColor->update(['result_color' => $randomColor]);
+                // $randomColor = $gameColor->randomColor();
+                // $gameColor->update(['result_color' => $randomColor]);
 
-                ColorPrediction::where('game_id', $request->game_id)->update(['result_color' =>  $randomColor]);
+                    $allColorGame = ColorPrediction::where('game_id', $request->game_id)->get()->toArray();
+                    $count = count($allColorGame);
+
+                    if ($count == 1) {
+                        do {
+                            $randomColor = ['red', 'violet', 'green', 'orange'][array_rand([0, 1, 2, 3])];
+                        } while ($randomColor == $allColorGame[0]['game_color']);
+                        $gameColor->update(['result_color' => $randomColor]);
+                        ColorPrediction::where('game_id', $request->game_id)->update(['result_color' => $randomColor]);
+                    }
+
+                    if ($count == 2) {
+                        do {
+                            $randomColor = ['red', 'violet', 'green', 'orange'][array_rand([0, 1, 2, 3])];
+                        } while ($randomColor == $allColorGame[0]['game_color'] || $randomColor == $allColorGame[1]['game_color']);
+                        $gameColor->update(['result_color' => $randomColor]);
+                        ColorPrediction::where('game_id', $request->game_id)->update(['result_color' => $randomColor]);
+                        // dd($randomColor, $allColorGame[0]['game_color'], $allColorGame[1]['game_color']);
+                    }
+
+                    if ($count > 2) {
+                        $userColors = [];
+                        foreach ($allColorGame as $gameData) {
+                            $userColors[] = [
+                                'color' => $gameData['game_color'],
+                                'amount' => (int) $gameData['amount'],
+                            ];
+                        }
+
+                        $outputArray = [];
+
+                        foreach ($userColors as $item) {
+                            $color = $item['color'];
+                            $amount = $item['amount'];
+
+                            if (isset($outputArray[$color])) {
+                                // If the color already exists in the output array, add the amount to it
+                                $outputArray[$color]['amount'] += $amount;
+                            } else {
+                                // If the color doesn't exist in the output array, create a new entry
+                                $outputArray[$color] = ['color' => $color, 'amount' => $amount];
+                            }
+                        }
+
+                        usort($outputArray, function ($a, $b) {
+                            return $a['amount'] - $b['amount'];
+                        });
+
+                        $lowestAmountColor = $outputArray[0]['color'];
+                        $gameColor->update(['result_color' => $lowestAmountColor]);
+                        ColorPrediction::where('game_id', $request->game_id)->update(['result_color' => $lowestAmountColor]);
+                    }
+                // ColorPrediction::where('game_id', $request->game_id)->update(['result_color' =>  $randomColor]);
             } else {
                 ColorPrediction::where('game_id', $request->game_id)->update(['result_color' =>  $gameColor->result_color]);
             }
